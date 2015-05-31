@@ -10,7 +10,7 @@ import play.api.mvc.{ RequestHeader, Result }
 import utils.di.SilhouetteModule
 
 import scala.concurrent.Future
-
+import com.google.inject.Injector
 /**
  * The global object.
  */
@@ -24,7 +24,13 @@ trait Global extends GlobalSettings with SecuredSettings with Logger {
   /**
    * The Guice dependencies injector.
    */
-  val injector = Guice.createInjector(new SilhouetteModule)
+  var injector: Injector = _
+
+  override def onStart(app: play.api.Application) = {
+    super.onStart(app)
+    // Now the configuration is read and we can create our Injector.
+    injector = Guice.createInjector(new SilhouetteModule())
+  }
 
   /**
    * Loads the controller classes with the Guice injector,
