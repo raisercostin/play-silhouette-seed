@@ -2,24 +2,29 @@ import play.PlayScala
 
 import scalariform.formatter.preferences._
 
-name := "play-silhouette-seed"
+name := """play23-silhouette2-slick2"""
 
-version := "2.0"
+version := "1.0"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.10.5"
 
 resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "com.mohiva" %% "play-silhouette" % "2.0",
+  "com.mohiva" %% "play-silhouette" % "2.0-RC2",
   "org.webjars" %% "webjars-play" % "2.3.0",
   "org.webjars" % "bootstrap" % "3.1.1",
   "org.webjars" % "jquery" % "1.11.0",
   "net.codingwell" %% "scala-guice" % "4.0.0-beta5",
-  "com.mohiva" %% "play-silhouette-testkit" % "2.0" % "test",
-  cache
+  "com.mohiva" %% "play-silhouette-testkit" % "2.0-RC2" % "test"
+	,"com.typesafe.play" %% "play-slick" % "0.7.0"
+	,"com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0"
+	,"com.typesafe.slick" %% "slick" % "2.0.0"
+	,"joda-time" % "joda-time" % "2.3"
+	,"org.joda" % "joda-convert" % "1.5"
+  ,cache
 )
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
