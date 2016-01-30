@@ -1,7 +1,10 @@
-Silhouette Seed Template
-=====================================
+Silhouette Slick Seed Template
+==============================
+
+This is a fork of the official Silhouette Seed project. If you want to have a first look at Silhouette, I suggest you have a look at the [official project](https://github.com/mohiva/play-silhouette-seed).
 
 The Silhouette Seed project is an Activator template which shows how [Silhouette](https://github.com/mohiva/play-silhouette) can be implemented in a Play Framework application. It's a starting point which can be extended to fit your needs.
+It uses the [play-slick](https://github.com/playframework/play-slick) library for database access.
 
 ## Example
 
@@ -9,7 +12,7 @@ The Silhouette Seed project is an Activator template which shows how [Silhouette
 
 (The "Build App" phase will take a few minutes)
 
-Or you can find a running example of this template under the following URL: https://play-silhouette-seed.herokuapp.com/
+Currently, there is no live example of this template.
 
 ## Features
 
@@ -20,14 +23,25 @@ Or you can find a running example of this template under the following URL: http
 * Dependency Injection with Guice
 * Publishing Events
 * Avatar service
+* Remember me functionality
+* [Security headers](https://www.playframework.com/documentation/2.4.x/SecurityHeaders)
+* [CSRF Protection](https://www.playframework.com/documentation/2.4.x/ScalaCsrf)
+* play-slick database access
 
 ## Documentation
 
 Consulate the [Silhouette documentation](http://silhouette.mohiva.com/docs) for more information. If you need help with the integration of Silhouette into your project, don't hesitate and ask questions in our [mailing list](https://groups.google.com/forum/#!forum/play-silhouette) or on [Stack Overflow](http://stackoverflow.com/questions/tagged/playframework).
 
+### Slick
+
+The template stores all authentication information in a database via [Slick](http://slick.typesafe.com/) It uses an in memory [H2](www.h2database.com/) database by default.
+
+In order to use another database supported by Slick, you need to change the driver in your application.conf and add the corresponding JDBC driver to your dependencies. The [Play Slick documentation](https://www.playframework.com/documentation/2.4.x/PlaySlick) has more information about database configuration.
+
 ## Activator
 
-See https://typesafe.com/activator/template/play-silhouette-seed
+This project template is also
+[hosted at typesafe](https://typesafe.com/activator/template/play-silhouette-slick-seed).
 
 # License
 
