@@ -35,6 +35,9 @@ object Common {
 		  "com.mohiva"        %% "play-silhouette"         % "3.0.0" withSources(),
 		  "org.webjars"       %% "webjars-play"            % "2.4.0-2" withSources()
 		)
+	, resolvers ++= Seq(
+		Resolver.jcenterRepo,
+		"scalaz-bintray" at "https://dl.bintray.com/scalaz/releases")
   )
 }
 
