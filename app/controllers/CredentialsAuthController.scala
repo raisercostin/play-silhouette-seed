@@ -53,7 +53,10 @@ class CredentialsAuthController @Inject() (
    */
   def authenticate = Action.async { implicit request =>
     SignInForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
+      form => 
+        //Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
+        //a redirect is needed since we are on a POST
+        Future.successful(Redirect(routes.SilhouetteController.signIn()).flashing("error" -> Messages("invalid.credentials"))),
       data => {
         val credentials = Credentials(data.email, data.password)
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
