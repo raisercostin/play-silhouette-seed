@@ -18,4 +18,4 @@ libraryDependencies ++= Seq(
 
 play.Project.playScalaSettings
 
-templatesImport ++= Seq("com.mohiva.play._")
+templatesImport ++= Seq("com.mohiva.play._","controllers.silhouette.{routes => moduleRoutes}")

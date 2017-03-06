@@ -1,4 +1,4 @@
-package app
+package silhouette.app
 
 import play.api.i18n.{Messages, Lang}
 import play.api.mvc.Results._
@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.core.{Logger, SecuredSettings}
 import utils.di.SilhouetteModule
 import scala.concurrent.Future
 import com.google.inject.Guice
-import controllers.routes
+import controllers.silhouette.routes
 
 /**
  * The global configuration.

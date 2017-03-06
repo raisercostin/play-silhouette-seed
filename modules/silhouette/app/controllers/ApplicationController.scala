@@ -1,4 +1,4 @@
-package controllers
+package controllers.silhouette
 
 import models.User
 import com.mohiva.play.silhouette.core.{LogoutEvent, Environment, Silhouette}
