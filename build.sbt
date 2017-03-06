@@ -23,6 +23,7 @@ lazy val silhouetteModule = (project in file("modules/silhouette")).enablePlugin
 lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(silhouetteModule).dependsOn(silhouetteModule)
 
 play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
+//WebKeys.importDirectly := true
 
 routesGenerator := InjectedRoutesGenerator
 
