@@ -1,0 +1,16 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET     /robots.txt              controllers.Assets.at(path="/public", file="robots.txt")
+GET     /humans.txt              controllers.Assets.at(path="/public", file="humans.txt")
+GET     /favicon.ico             controllers.Assets.at(path="/public", file="favicon.ico")
+
+# Home page
+#GET     /	                      	@controllers.MessageController.index
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /webjars/*file              controllers.WebJarAssets.at(file)
+
+->  / silhouette.Routes
