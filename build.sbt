@@ -25,8 +25,9 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 //lazy val silhouetteAngularUi = (project in file("modules/silhouettePersistence"))
 
 lazy val silhouetteModule = (project in file("modules/silhouette")).enablePlugins(PlayScala)
-
 lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(silhouetteModule).dependsOn(silhouetteModule)
+
+play.PlayImport.PlayKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
