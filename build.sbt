@@ -2,7 +2,7 @@ import play.Project._
 
 name := "play-silhouette-seed-multiproject"
 
-version := "0.9"
+version := "1.0"
 
 play.Project.playScalaSettings
 
