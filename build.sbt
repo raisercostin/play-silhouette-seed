@@ -1,16 +1,11 @@
-import play.PlayScala
-
 import scalariform.formatter.preferences._
 
 name := "play-silhouette-seed-multiproject"
 
-version := "2.0"
+version := "3.0.0"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
-resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
-
-resolvers += Resolver.sonatypeRepo("snapshots")
 
 //Preparing to separate silhouette dependencies on specific persistence and presentation
 //
@@ -27,7 +22,9 @@ resolvers += Resolver.sonatypeRepo("snapshots")
 lazy val silhouetteModule = (project in file("modules/silhouette")).enablePlugins(PlayScala)
 lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(silhouetteModule).dependsOn(silhouetteModule)
 
-play.PlayImport.PlayKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
+play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
+
+routesGenerator := InjectedRoutesGenerator
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.

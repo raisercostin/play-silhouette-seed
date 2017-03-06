@@ -9,8 +9,9 @@ GET     /favicon.ico             controllers.Assets.at(path="/public", file="fav
 # Home page
 #GET     /	                      	@controllers.MessageController.index
 
+->  / silhouette.Routes
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /webjars/*file              controllers.WebJarAssets.at(file)
 
-->  / silhouette.Routes
