@@ -24,6 +24,10 @@ import play.api.Play
 import play.api.Play.current
 
 import scala.collection.immutable.ListMap
+import models.daos.slick.OAuth2InfoDAOSlick
+import models.daos.slick.UserDAOSlick
+import models.daos.slick.OAuth1InfoDAOSlick
+import models.daos.slick.PasswordInfoDAOSlick
 
 /**
  * The Guice module which wires all Silhouette dependencies.
@@ -35,10 +39,20 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    */
   def configure() {
     bind[UserService].to[UserServiceImpl]
-    bind[UserDAO].to[UserDAOImpl]
-    bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
-    bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
-    bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
+    //
+    val useSlick = Play.configuration.getBoolean("silhouette.seed.db.useSlick").getOrElse(false)
+    if (useSlick) {
+      bind[UserDAO].to[UserDAOSlick]
+      bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAOSlick]
+      bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAOSlick]
+      bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAOSlick]
+    } else {
+      bind[UserDAO].to[UserDAOImpl]
+      bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
+      bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
+      bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
+    }
+
     bind[DelegableAuthInfoDAO[OpenIDInfo]].to[OpenIDInfoDAO]
     bind[CacheLayer].to[PlayCacheLayer]
     bind[HTTPLayer].to[PlayHTTPLayer]

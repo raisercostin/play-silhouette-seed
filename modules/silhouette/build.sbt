@@ -2,11 +2,11 @@ import play.PlayScala
 
 import scalariform.formatter.preferences._
 
-name := "play-silhouette-seed"
+name := "silhouette-seed"
 
-version := "2.0"
+version := "1.0"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.10.6"
 
 resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
 
