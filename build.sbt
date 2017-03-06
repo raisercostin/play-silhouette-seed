@@ -1,10 +1,10 @@
-import play.Project._
+import play.PlayScala
+
+scalaVersion := "2.11.1"
 
 name := "play-silhouette-seed-multiproject"
 
 version := "1.0"
-
-play.Project.playScalaSettings
 
 //Preparing to separate silhouette dependencies on specific persistence and presentation
 //
@@ -18,6 +18,6 @@ play.Project.playScalaSettings
 //lazy val silhouetteTemplatesUi = (project in file("modules/silhouettePersistence"))
 //lazy val silhouetteAngularUi = (project in file("modules/silhouettePersistence"))
 
-lazy val silhouetteModule = (project in file("modules/silhouette"))
+lazy val silhouetteModule = (project in file("modules/silhouette")).enablePlugins(PlayScala)
 
-lazy val root = (project in file(".")).aggregate(silhouetteModule).dependsOn(silhouetteModule)
+lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(silhouetteModule).dependsOn(silhouetteModule)

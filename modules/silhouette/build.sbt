@@ -15,4 +15,6 @@ libraryDependencies ++= Seq(
   cache
 )
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+//silhouetteModule.enablePlugins(PlayScala)
+
+TwirlKeys.templateImports ++= Seq("com.mohiva.play._","controllers.silhouette.{routes => moduleRoutes}")
