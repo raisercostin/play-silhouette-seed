@@ -1,7 +1,8 @@
 package models
 
-import com.mohiva.play.silhouette.core.{LoginInfo, Identity}
 import java.util.UUID
+
+import com.mohiva.play.silhouette.api.{ Identity, LoginInfo }
 
 /**
  * The user object.
@@ -21,5 +22,4 @@ case class User(
   lastName: Option[String],
   fullName: Option[String],
   email: Option[String],
-  avatarURL: Option[String]
-) extends Identity
+  avatarURL: Option[String]) extends Identity
