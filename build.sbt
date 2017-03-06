@@ -1,11 +1,14 @@
+import com.typesafe.sbt.SbtScalariform._
+
 import scalariform.formatter.preferences._
 
 name := "play-silhouette-seed-multiproject"
 
-version := "3.0.0"
+version := "4.0.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
+resolvers += Resolver.jcenterRepo
 
 //Preparing to separate silhouette dependencies on specific persistence and presentation
 //
@@ -23,9 +26,11 @@ lazy val silhouetteModule = (project in file("modules/silhouette")).enablePlugin
 lazy val root = (project in file(".")).enablePlugins(PlayScala).aggregate(silhouetteModule).dependsOn(silhouetteModule)
 
 play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
-//WebKeys.importDirectly := true
+WebKeys.importDirectly := true
 
 routesGenerator := InjectedRoutesGenerator
+
+routesImport += "utils.route.Binders._"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -49,4 +54,4 @@ defaultScalariformSettings
 ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(FormatXml, false)
   .setPreference(DoubleIndentClassDeclaration, false)
-  .setPreference(PreserveDanglingCloseParenthesis, true)
+  .setPreference(DanglingCloseParenthesis, Preserve)

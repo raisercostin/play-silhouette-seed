@@ -6,16 +6,29 @@
 
 # Home page
 GET         /                                controllers.silhouette.ApplicationController.index
-GET         /signIn                          controllers.silhouette.ApplicationController.signIn
-GET         /signUp                          controllers.silhouette.ApplicationController.signUp
 GET         /signOut                         controllers.silhouette.ApplicationController.signOut
 GET         /authenticate/:provider          controllers.silhouette.SocialAuthController.authenticate(provider)
-POST        /authenticate/credentials        controllers.silhouette.CredentialsAuthController.authenticate
-POST        /signUp                          controllers.silhouette.SignUpController.signUp
+
+GET         /signUp                          controllers.silhouette.SignUpController.view
+POST        /signUp                          controllers.silhouette.SignUpController.submit
+
+GET         /signIn                          controllers.silhouette.SignInController.view
+POST        /signIn                          controllers.silhouette.SignInController.submit
+
+GET         /password/forgot                 controllers.silhouette.ForgotPasswordController.view
+POST        /password/forgot                 controllers.silhouette.ForgotPasswordController.submit
+GET         /password/reset/:token           controllers.silhouette.ResetPasswordController.view(token: java.util.UUID)
+POST        /password/reset/:token           controllers.silhouette.ResetPasswordController.submit(token: java.util.UUID)
+GET         /password/change                 controllers.silhouette.ChangePasswordController.view
+POST        /password/change                 controllers.silhouette.ChangePasswordController.submit
+
+GET         /account/email/:email            controllers.silhouette.ActivateAccountController.send(email: String)
+GET         /account/activate/:token         controllers.silhouette.ActivateAccountController.activate(token: java.util.UUID)
 
 # Map static resources from the /public folder to the /assets URL path
-#GET         /assets/*file                    controllers.Assets.at(path="/public", file)
-GET         /webjars/*file                   controllers.WebJarAssets.at(file)
+#option1 - Add this to parent `build.sbt` and should work: WebKeys.importDirectly := true
+GET         /assets/*file                    controllers.Assets.at(path="/public", file)
+#option2 - To fix collisions should change to https://github.com/playframework/playframework/issues/4576
+#GET         /assets/*file                    controllers.Assets.at(path="/public/modules/silhouette", file)
 
-#to fix collisions should change to https://github.com/playframework/playframework/issues/4576
-GET         /assets/*file                    controllers.Assets.at(path="/public/modules/silhouette", file)
+GET         /webjars/*file                   controllers.WebJarAssets.at(file)

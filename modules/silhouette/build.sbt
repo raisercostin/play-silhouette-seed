@@ -1,24 +1,27 @@
+import com.typesafe.sbt.SbtScalariform._
+
 import scalariform.formatter.preferences._
 
 name := "play-silhouette-seed"
 
-version := "3.0.0"
+version := "4.0.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
-
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
-
-resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= Seq(
-  "com.mohiva" %% "play-silhouette" % "3.0.0",
-  "org.webjars" %% "webjars-play" % "2.4.0",
-  "net.codingwell" %% "scala-guice" % "4.0.0",
-  "net.ceedubs" %% "ficus" % "1.1.2",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
-  "com.mohiva" %% "play-silhouette-testkit" % "3.0.0" % "test",
+  "com.mohiva" %% "play-silhouette" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
+  "org.webjars" %% "webjars-play" % "2.5.0-2",
+  "net.codingwell" %% "scala-guice" % "4.0.1",
+  "com.iheart" %% "ficus" % "1.2.6",
+  "com.typesafe.play" %% "play-mailer" % "5.0.0",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
+  "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
+  "com.mohiva" %% "play-silhouette-testkit" % "4.0.0" % "test",
   specs2 % Test,
   cache,
   filters
@@ -30,6 +33,8 @@ libraryDependencies ++= Seq(
 TwirlKeys.templateImports ++= Seq("com.mohiva.play._","controllers.silhouette.{routes => moduleRoutes}")
 
 routesGenerator := InjectedRoutesGenerator
+
+routesImport += "utils.route.Binders._"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -53,4 +58,4 @@ defaultScalariformSettings
 ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(FormatXml, false)
   .setPreference(DoubleIndentClassDeclaration, false)
-  .setPreference(PreserveDanglingCloseParenthesis, true)
+  .setPreference(DanglingCloseParenthesis, Preserve)
