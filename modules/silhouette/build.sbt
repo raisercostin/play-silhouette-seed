@@ -24,13 +24,13 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.2" % "test",
 	specs2 % Test,
 	cache,
-	filters,
-	evolutions
+	filters
 )
 
 //silhouetteModule.enablePlugins(PlayScala)
-
 TwirlKeys.templateImports ++= Seq("com.mohiva.play._","controllers.silhouette.{routes => moduleRoutes}")
+
+routesGenerator := InjectedRoutesGenerator
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.

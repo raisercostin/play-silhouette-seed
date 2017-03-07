@@ -17,3 +17,4 @@ dist
 .cache-tests
 .settings/
 bin/
+/conf/*.bak

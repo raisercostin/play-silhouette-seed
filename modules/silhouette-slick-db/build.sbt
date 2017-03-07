@@ -26,4 +26,5 @@ libraryDependencies ++= Seq(
 	,"com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0"
 
 	,"com.h2database" % "h2" % "1.4.188"
+	,evolutions
 )

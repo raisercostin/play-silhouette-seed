@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
 	.dependsOn(silhouetteModule)
 
 play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls")
-//WebKeys.importDirectly := true
+WebKeys.importDirectly := true
 
 routesGenerator := InjectedRoutesGenerator
 
