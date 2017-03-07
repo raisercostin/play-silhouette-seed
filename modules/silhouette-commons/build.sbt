@@ -4,7 +4,7 @@ import scalariform.formatter.preferences._
 
 name := "silhouette-commons"
 
-version := "1.0"
+version := "3.0.0"
 
 scalaVersion := "2.10.6"
 

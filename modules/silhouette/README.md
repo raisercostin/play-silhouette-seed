@@ -20,6 +20,9 @@ Or you can find a running example of this template under the following URL: http
 * Dependency Injection with Guice
 * Publishing Events
 * Avatar service
+* Remember me functionality
+* [Security headers](https://www.playframework.com/documentation/2.4.x/SecurityHeaders)
+* [CSRF Protection](https://www.playframework.com/documentation/2.4.x/ScalaCsrf)
 
 ## Documentation
 
