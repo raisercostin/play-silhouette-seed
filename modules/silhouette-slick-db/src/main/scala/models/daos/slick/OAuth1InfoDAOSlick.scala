@@ -1,12 +1,12 @@
 package models.daos.slick
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers.OAuth1Info
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.db.slick.DatabaseConfigProvider
 import scala.concurrent.Future
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
 /**
  * The DAO to store the OAuth1 information.
@@ -83,7 +83,7 @@ class OAuth1InfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConf
     val query = loginInfoQuery(loginInfo).joinLeft(slickOAuth1Infos).on(_.id === _.loginInfoId)
     val action = query.result.head.flatMap {
       case (dbLoginInfo, Some(dbOAuth1Info)) => updateAction(loginInfo, authInfo)
-      case (dbLoginInfo, None)               => addAction(loginInfo, authInfo)
+      case (dbLoginInfo, None) => addAction(loginInfo, authInfo)
     }.transactionally
     db.run(action).map(_ => authInfo)
   }

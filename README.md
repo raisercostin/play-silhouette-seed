@@ -24,13 +24,16 @@ Currently, there is no live example of this template.
 * Publishing Events
 * Avatar service
 * Remember me functionality
+* Password reset/change functionality
+* Account activation functionality
+* Email sending and auth token cleanup
 * [Security headers](https://www.playframework.com/documentation/2.4.x/SecurityHeaders)
 * [CSRF Protection](https://www.playframework.com/documentation/2.4.x/ScalaCsrf)
 * play-slick database access
 
 ## Documentation
 
-Consulate the [Silhouette documentation](http://silhouette.mohiva.com/docs) for more information. If you need help with the integration of Silhouette into your project, don't hesitate and ask questions in our [mailing list](https://groups.google.com/forum/#!forum/play-silhouette) or on [Stack Overflow](http://stackoverflow.com/questions/tagged/playframework).
+Consult the [Silhouette documentation](http://silhouette.mohiva.com/docs) for more information. If you need help with the integration of Silhouette into your project, don't hesitate and ask questions in our [mailing list](https://groups.google.com/forum/#!forum/play-silhouette) or on [Stack Overflow](http://stackoverflow.com/questions/tagged/playframework).
 
 ### Slick
 
@@ -46,3 +49,14 @@ This project template is also
 # License
 
 The code is licensed under [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
+# Dependencies
+
+| library | play   | activator | sbt            | scala       | jdk            | slick       | play-slick        | silhouette | bootstrap     |
+|---------|--------|-----------|----------------|-------------|----------------|-------------|-------------------|------------|---------------|
+| play23  | 2.3    | 1.3.2     | 0.13.8         | 2.10 2.11   | jdk6/jdk7/jdk8 | 2.0.0       | 0.7.0             | 1.0/2.0.2  | 3.2.0         |
+| play24  | 2.4    | 1.3.12    | 0.13.8         | 2.10.6      | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
+| play24  | 2.4    | 1.3.12    | 0.13.8         | 2.11.8      | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
+| play25  | 2.5.12 | 1.3.12    | 0.13.8 0.13.11 | 2.11.7      | jdk8           | 3.1.x       | 2.0.2             | 4.0        | 3.2.0         |
+|         |        |           |                |             |                |             |                   |            |               |
+| last    | 2.5    | 1.3.12    | 0.13.13        | 2.11/2.12   | jdk9           | 3.1         | 2.0.2             | 4.0        | 4.0.0-alpha.6 |

@@ -12,7 +12,7 @@ import scala.concurrent.Future
 /**
  * Give access to the user object using Slick
  */
-class UserDAOSlick @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends models.daos.UserDAO with DAOSlick {
+class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends models.daos.UserDAO with DAOSlick {
 
   import driver.api._
 
@@ -30,7 +30,7 @@ class UserDAOSlick @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
     } yield dbUser
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+        User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL, user.activated)
       }
     }
   }
@@ -57,7 +57,9 @@ class UserDAOSlick @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
             user.lastName,
             user.fullName,
             user.email,
-            user.avatarURL)
+            user.avatarURL,
+            user.activated
+          )
       }
     }
   }
@@ -69,14 +71,15 @@ class UserDAOSlick @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
    * @return The saved user.
    */
   def save(user: User) = {
-    val dbUser = DBUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+    val dbUser = DBUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL, user.activated)
     val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
     // We don't have the LoginInfo id so we try to get it first.
     // If there is no LoginInfo yet for this user we retrieve the id on insertion.    
     val loginInfoAction = {
       val retrieveLoginInfo = slickLoginInfos.filter(
         info => info.providerID === user.loginInfo.providerID &&
-        info.providerKey === user.loginInfo.providerKey).result.headOption
+          info.providerKey === user.loginInfo.providerKey
+      ).result.headOption
       val insertLoginInfo = slickLoginInfos.returning(slickLoginInfos.map(_.id)).
         into((info, id) => info.copy(id = Some(id))) += dbLoginInfo
       for {

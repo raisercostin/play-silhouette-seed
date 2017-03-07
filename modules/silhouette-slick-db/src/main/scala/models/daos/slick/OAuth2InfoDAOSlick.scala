@@ -1,7 +1,7 @@
 package models.daos.slick
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
@@ -34,7 +34,8 @@ class OAuth2InfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConf
         authInfo.tokenType,
         authInfo.expiresIn,
         authInfo.refreshToken,
-        dbLoginInfo.id.get)
+        dbLoginInfo.id.get
+      )
     }.transactionally
 
   def updateAction(loginInfo: LoginInfo, authInfo: OAuth2Info) =
@@ -93,7 +94,7 @@ class OAuth2InfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConf
     } yield result
     val action = query.result.head.flatMap {
       case (dbLoginInfo, Some(dbOAuth2Info)) => updateAction(loginInfo, authInfo)
-      case (dbLoginInfo, None)               => addAction(loginInfo, authInfo)
+      case (dbLoginInfo, None) => addAction(loginInfo, authInfo)
     }.transactionally
     db.run(action).map(_ => authInfo)
   }

@@ -1,7 +1,7 @@
 package models.daos.slick
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers.OpenIDInfo
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
@@ -27,17 +27,19 @@ class OpenIDInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConf
         slickOpenIDInfos += DBOpenIDInfo(authInfo.id, dbLoginInfo.id.get),
         slickOpenIDAttributes ++= authInfo.attributes.map {
           case (key, value) => DBOpenIDAttribute(authInfo.id, key, value)
-        })
+        }
+      )
     }.transactionally
 
   protected def updateAction(loginInfo: LoginInfo, authInfo: OpenIDInfo) =
     openIDInfoQuery(loginInfo).result.head.flatMap { dbOpenIDInfo =>
       DBIO.seq(
-        slickOpenIDInfos filter(_.id === dbOpenIDInfo.id) update dbOpenIDInfo.copy(id = authInfo.id),
+        slickOpenIDInfos filter (_.id === dbOpenIDInfo.id) update dbOpenIDInfo.copy(id = authInfo.id),
         slickOpenIDAttributes.filter(_.id === dbOpenIDInfo.id).delete,
         slickOpenIDAttributes ++= authInfo.attributes.map {
           case (key, value) => DBOpenIDAttribute(authInfo.id, key, value)
-        })
+        }
+      )
     }.transactionally
 
   /**
@@ -92,7 +94,7 @@ class OpenIDInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConf
     val query = loginInfoQuery(loginInfo).joinLeft(slickOpenIDInfos).on(_.id === _.loginInfoId)
     val action = query.result.head.flatMap {
       case (dbLoginInfo, Some(dbOpenIDInfo)) => updateAction(loginInfo, authInfo)
-      case (dbLoginInfo, None)               => addAction(loginInfo, authInfo)
+      case (dbLoginInfo, None) => addAction(loginInfo, authInfo)
     }
     db.run(action).map(_ => authInfo)
   }

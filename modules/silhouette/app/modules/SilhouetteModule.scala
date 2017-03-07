@@ -1,12 +1,15 @@
 package modules
 
+import com.google.inject.name.Named
 import com.google.inject.{ AbstractModule, Provides }
+import com.mohiva.play.silhouette.api.actions.{ SecuredErrorHandler, UnsecuredErrorHandler }
+import com.mohiva.play.silhouette.api.crypto._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services._
 import com.mohiva.play.silhouette.api.util._
-import com.mohiva.play.silhouette.api.{ Environment, EventBus }
+import com.mohiva.play.silhouette.api.{ Environment, EventBus, Silhouette, SilhouetteProvider }
+import com.mohiva.play.silhouette.crypto.{ JcaCookieSigner, JcaCookieSignerSettings, JcaCrypter, JcaCrypterSettings }
 import com.mohiva.play.silhouette.impl.authenticators._
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers._
 import com.mohiva.play.silhouette.impl.providers.oauth1._
 import com.mohiva.play.silhouette.impl.providers.oauth1.secrets.{ CookieSecretProvider, CookieSecretSettings }
@@ -15,10 +18,11 @@ import com.mohiva.play.silhouette.impl.providers.oauth2._
 import com.mohiva.play.silhouette.impl.providers.oauth2.state.{ CookieStateProvider, CookieStateSettings, DummyStateProvider }
 import com.mohiva.play.silhouette.impl.providers.openid.YahooProvider
 import com.mohiva.play.silhouette.impl.providers.openid.services.PlayOpenIDService
-import com.mohiva.play.silhouette.impl.repositories.DelegableAuthInfoRepository
 import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
-import models.User
+import com.mohiva.play.silhouette.password.BCryptPasswordHasher
+import com.mohiva.play.silhouette.persistence.daos.{ DelegableAuthInfoDAO, InMemoryAuthInfoDAO }
+import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 import models.daos._
 import models.daos.slick._
 import models.services.{ UserService, UserServiceImpl }
@@ -30,6 +34,7 @@ import play.api.libs.openid.OpenIdClient
 import play.api.libs.ws.WSClient
 import javax.inject.Inject
 import play.api.Configuration
+import utils.auth.{ CustomSecuredErrorHandler, CustomUnsecuredErrorHandler, DefaultEnv }
 
 /**
  * The Guice module which wires all Silhouette dependencies.
@@ -40,6 +45,9 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
    * Configures the module.
    */
   def configure() = {
+    bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
+    bind[UnsecuredErrorHandler].to[CustomUnsecuredErrorHandler]
+    bind[SecuredErrorHandler].to[CustomSecuredErrorHandler]
     bind[UserService].to[UserServiceImpl]
     //
     val useSlick = configuration.getBoolean("silhouette.seed.db.useSlick").getOrElse(false)
@@ -51,10 +59,11 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
       bind[DelegableAuthInfoDAO[OpenIDInfo]].to[OpenIDInfoDAOSlick]
     } else {
       bind[UserDAO].to[UserDAOImpl]
-      bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
-      bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
-      bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
-      bind[DelegableAuthInfoDAO[OpenIDInfo]].to[OpenIDInfoDAO]
+      // Replace this with the bindings to your concrete DAOs
+      bind[DelegableAuthInfoDAO[PasswordInfo]].toInstance(new InMemoryAuthInfoDAO[PasswordInfo])
+      bind[DelegableAuthInfoDAO[OAuth1Info]].toInstance(new InMemoryAuthInfoDAO[OAuth1Info])
+      bind[DelegableAuthInfoDAO[OAuth2Info]].toInstance(new InMemoryAuthInfoDAO[OAuth2Info])
+      bind[DelegableAuthInfoDAO[OpenIDInfo]].toInstance(new InMemoryAuthInfoDAO[OpenIDInfo])
     }
 
     bind[CacheLayer].to[PlayCacheLayer]
@@ -64,6 +73,7 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
     bind[EventBus].toInstance(EventBus())
     bind[Clock].toInstance(Clock())
+
   }
 
   /**
@@ -87,9 +97,10 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideEnvironment(
     userService: UserService,
     authenticatorService: AuthenticatorService[CookieAuthenticator],
-    eventBus: EventBus): Environment[User, CookieAuthenticator] = {
+    eventBus: EventBus
+  ): Environment[DefaultEnv] = {
 
-    Environment[User, CookieAuthenticator](
+    Environment[DefaultEnv](
       userService,
       authenticatorService,
       Seq(),
@@ -117,7 +128,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
     clefProvider: ClefProvider,
     twitterProvider: TwitterProvider,
     xingProvider: XingProvider,
-    yahooProvider: YahooProvider): SocialProviderRegistry = {
+    yahooProvider: YahooProvider
+  ): SocialProviderRegistry = {
 
     SocialProviderRegistry(Seq(
       googleProvider,
@@ -131,23 +143,68 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   }
 
   /**
-   * Provides the authenticator service.
+   * Provides the cookie signer for the OAuth1 token secret provider.
    *
-   * @param fingerprintGenerator The fingerprint generator implementation.
-   * @param idGenerator The ID generator implementation.
    * @param configuration The Play configuration.
-   * @param clock The clock instance.
-   * @return The authenticator service.
+   * @return The cookie signer for the OAuth1 token secret provider.
    */
-  @Provides
-  def provideAuthenticatorService(
-    fingerprintGenerator: FingerprintGenerator,
-    idGenerator: IDGenerator,
-    configuration: Configuration,
-    clock: Clock): AuthenticatorService[CookieAuthenticator] = {
+  @Provides @Named("oauth1-token-secret-cookie-signer")
+  def provideOAuth1TokenSecretCookieSigner(configuration: Configuration): CookieSigner = {
+    val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.oauth1TokenSecretProvider.cookie.signer")
 
-    val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
-    new CookieAuthenticatorService(config, None, fingerprintGenerator, idGenerator, clock)
+    new JcaCookieSigner(config)
+  }
+
+  /**
+   * Provides the crypter for the OAuth1 token secret provider.
+   *
+   * @param configuration The Play configuration.
+   * @return The crypter for the OAuth1 token secret provider.
+   */
+  @Provides @Named("oauth1-token-secret-crypter")
+  def provideOAuth1TokenSecretCrypter(configuration: Configuration): Crypter = {
+    val config = configuration.underlying.as[JcaCrypterSettings]("silhouette.oauth1TokenSecretProvider.crypter")
+
+    new JcaCrypter(config)
+  }
+
+  /**
+   * Provides the cookie signer for the OAuth2 state provider.
+   *
+   * @param configuration The Play configuration.
+   * @return The cookie signer for the OAuth2 state provider.
+   */
+  @Provides @Named("oauth2-state-cookie-signer")
+  def provideOAuth2StageCookieSigner(configuration: Configuration): CookieSigner = {
+    val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.oauth2StateProvider.cookie.signer")
+
+    new JcaCookieSigner(config)
+  }
+
+  /**
+   * Provides the cookie signer for the authenticator.
+   *
+   * @param configuration The Play configuration.
+   * @return The cookie signer for the authenticator.
+   */
+  @Provides @Named("authenticator-cookie-signer")
+  def provideAuthenticatorCookieSigner(configuration: Configuration): CookieSigner = {
+    val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")
+
+    new JcaCookieSigner(config)
+  }
+
+  /**
+   * Provides the crypter for the authenticator.
+   *
+   * @param configuration The Play configuration.
+   * @return The crypter for the authenticator.
+   */
+  @Provides @Named("authenticator-crypter")
+  def provideAuthenticatorCrypter(configuration: Configuration): Crypter = {
+    val config = configuration.underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
+
+    new JcaCrypter(config)
   }
 
   /**
@@ -164,9 +221,37 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
     passwordInfoDAO: DelegableAuthInfoDAO[PasswordInfo],
     oauth1InfoDAO: DelegableAuthInfoDAO[OAuth1Info],
     oauth2InfoDAO: DelegableAuthInfoDAO[OAuth2Info],
-    openIDInfoDAO: DelegableAuthInfoDAO[OpenIDInfo]): AuthInfoRepository = {
+    openIDInfoDAO: DelegableAuthInfoDAO[OpenIDInfo]
+  ): AuthInfoRepository = {
 
     new DelegableAuthInfoRepository(passwordInfoDAO, oauth1InfoDAO, oauth2InfoDAO, openIDInfoDAO)
+  }
+
+  /**
+   * Provides the authenticator service.
+   *
+   * @param cookieSigner The cookie signer implementation.
+   * @param crypter The crypter implementation.
+   * @param fingerprintGenerator The fingerprint generator implementation.
+   * @param idGenerator The ID generator implementation.
+   * @param configuration The Play configuration.
+   * @param clock The clock instance.
+   * @return The authenticator service.
+   */
+  @Provides
+  def provideAuthenticatorService(
+    @Named("authenticator-cookie-signer") cookieSigner: CookieSigner,
+    @Named("authenticator-crypter") crypter: Crypter,
+    fingerprintGenerator: FingerprintGenerator,
+    idGenerator: IDGenerator,
+    configuration: Configuration,
+    clock: Clock
+  ): AuthenticatorService[CookieAuthenticator] = {
+
+    val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
+    val encoder = new CrypterAuthenticatorEncoder(crypter)
+
+    new CookieAuthenticatorService(config, None, cookieSigner, encoder, fingerprintGenerator, idGenerator, clock)
   }
 
   /**
@@ -181,43 +266,69 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   /**
    * Provides the OAuth1 token secret provider.
    *
+   * @param cookieSigner The cookie signer implementation.
+   * @param crypter The crypter implementation.
    * @param configuration The Play configuration.
    * @param clock The clock instance.
    * @return The OAuth1 token secret provider implementation.
    */
   @Provides
-  def provideOAuth1TokenSecretProvider(configuration: Configuration, clock: Clock): OAuth1TokenSecretProvider = {
+  def provideOAuth1TokenSecretProvider(
+    @Named("oauth1-token-secret-cookie-signer") cookieSigner: CookieSigner,
+    @Named("oauth1-token-secret-crypter") crypter: Crypter,
+    configuration: Configuration,
+    clock: Clock
+  ): OAuth1TokenSecretProvider = {
+
     val settings = configuration.underlying.as[CookieSecretSettings]("silhouette.oauth1TokenSecretProvider")
-    new CookieSecretProvider(settings, clock)
+    new CookieSecretProvider(settings, cookieSigner, crypter, clock)
   }
 
   /**
    * Provides the OAuth2 state provider.
    *
    * @param idGenerator The ID generator implementation.
+   * @param cookieSigner The cookie signer implementation.
    * @param configuration The Play configuration.
    * @param clock The clock instance.
    * @return The OAuth2 state provider implementation.
    */
   @Provides
-  def provideOAuth2StateProvider(idGenerator: IDGenerator, configuration: Configuration, clock: Clock): OAuth2StateProvider = {
+  def provideOAuth2StateProvider(
+    idGenerator: IDGenerator,
+    @Named("oauth2-state-cookie-signer") cookieSigner: CookieSigner,
+    configuration: Configuration, clock: Clock
+  ): OAuth2StateProvider = {
+
     val settings = configuration.underlying.as[CookieStateSettings]("silhouette.oauth2StateProvider")
-    new CookieStateProvider(settings, idGenerator, clock)
+    new CookieStateProvider(settings, idGenerator, cookieSigner, clock)
+  }
+
+  /**
+   * Provides the password hasher registry.
+   *
+   * @param passwordHasher The default password hasher implementation.
+   * @return The password hasher registry.
+   */
+  @Provides
+  def providePasswordHasherRegistry(passwordHasher: PasswordHasher): PasswordHasherRegistry = {
+    new PasswordHasherRegistry(passwordHasher)
   }
 
   /**
    * Provides the credentials provider.
    *
    * @param authInfoRepository The auth info repository implementation.
-   * @param passwordHasher The default password hasher implementation.
+   * @param passwordHasherRegistry The password hasher registry.
    * @return The credentials provider.
    */
   @Provides
   def provideCredentialsProvider(
     authInfoRepository: AuthInfoRepository,
-    passwordHasher: PasswordHasher): CredentialsProvider = {
+    passwordHasherRegistry: PasswordHasherRegistry
+  ): CredentialsProvider = {
 
-    new CredentialsProvider(authInfoRepository, passwordHasher, Seq(passwordHasher))
+    new CredentialsProvider(authInfoRepository, passwordHasherRegistry)
   }
 
   /**
@@ -232,7 +343,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideFacebookProvider(
     httpLayer: HTTPLayer,
     stateProvider: OAuth2StateProvider,
-    configuration: Configuration): FacebookProvider = {
+    configuration: Configuration
+  ): FacebookProvider = {
 
     new FacebookProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.facebook"))
   }
@@ -249,7 +361,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideGoogleProvider(
     httpLayer: HTTPLayer,
     stateProvider: OAuth2StateProvider,
-    configuration: Configuration): GoogleProvider = {
+    configuration: Configuration
+  ): GoogleProvider = {
 
     new GoogleProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.google"))
   }
@@ -266,7 +379,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideVKProvider(
     httpLayer: HTTPLayer,
     stateProvider: OAuth2StateProvider,
-    configuration: Configuration): VKProvider = {
+    configuration: Configuration
+  ): VKProvider = {
 
     new VKProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.vk"))
   }
@@ -296,7 +410,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideTwitterProvider(
     httpLayer: HTTPLayer,
     tokenSecretProvider: OAuth1TokenSecretProvider,
-    configuration: Configuration): TwitterProvider = {
+    configuration: Configuration
+  ): TwitterProvider = {
 
     val settings = configuration.underlying.as[OAuth1Settings]("silhouette.twitter")
     new TwitterProvider(httpLayer, new PlayOAuth1Service(settings), tokenSecretProvider, settings)
@@ -314,7 +429,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def provideXingProvider(
     httpLayer: HTTPLayer,
     tokenSecretProvider: OAuth1TokenSecretProvider,
-    configuration: Configuration): XingProvider = {
+    configuration: Configuration
+  ): XingProvider = {
 
     val settings = configuration.underlying.as[OAuth1Settings]("silhouette.xing")
     new XingProvider(httpLayer, new PlayOAuth1Service(settings), tokenSecretProvider, settings)
@@ -334,7 +450,8 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
     cacheLayer: CacheLayer,
     httpLayer: HTTPLayer,
     client: OpenIdClient,
-    configuration: Configuration): YahooProvider = {
+    configuration: Configuration
+  ): YahooProvider = {
 
     val settings = configuration.underlying.as[OpenIDSettings]("silhouette.yahoo")
     new YahooProvider(httpLayer, new PlayOpenIDService(client, settings), settings)

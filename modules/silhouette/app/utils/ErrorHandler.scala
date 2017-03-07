@@ -2,7 +2,6 @@ package utils
 
 import javax.inject.Inject
 
-import com.mohiva.play.silhouette.api.SecuredErrorHandler
 import controllers.silhouette.routes
 import play.api.http.DefaultHttpErrorHandler
 import play.api.i18n.Messages
@@ -12,6 +11,7 @@ import play.api.routing.Router
 import play.api.{ OptionalSourceMapper, Configuration }
 
 import scala.concurrent.Future
+import com.mohiva.play.silhouette.api.actions.SecuredErrorHandler
 
 /**
  * A secured error handler.
@@ -20,9 +20,11 @@ class ErrorHandler @Inject() (
   env: play.api.Environment,
   config: Configuration,
   sourceMapper: OptionalSourceMapper,
-  router: javax.inject.Provider[Router])
-  extends DefaultHttpErrorHandler(env, config, sourceMapper, router)
-  with SecuredErrorHandler {
+  router: javax.inject.Provider[Router],
+  messages: Messages
+)
+    extends DefaultHttpErrorHandler(env, config, sourceMapper, router)
+    with SecuredErrorHandler {
 
   /**
    * Called when a user is not authenticated.
@@ -33,8 +35,8 @@ class ErrorHandler @Inject() (
    * @param messages The messages for the current language.
    * @return The result to send to the client.
    */
-  override def onNotAuthenticated(request: RequestHeader, messages: Messages): Option[Future[Result]] = {
-    Some(Future.successful(Redirect(routes.ApplicationController.signIn())))
+  override def onNotAuthenticated(implicit request: RequestHeader): Future[Result] = {
+    Future.successful(Redirect(routes.SignInController.submit()))
   }
 
   /**
@@ -46,7 +48,7 @@ class ErrorHandler @Inject() (
    * @param messages The messages for the current language.
    * @return The result to send to the client.
    */
-  override def onNotAuthorized(request: RequestHeader, messages: Messages): Option[Future[Result]] = {
-    Some(Future.successful(Redirect(routes.ApplicationController.signIn()).flashing("error" -> Messages("access.denied")(messages))))
+  override def onNotAuthorized(implicit request: RequestHeader): Future[Result] = {
+    Future.successful(Redirect(routes.SignInController.submit()).flashing("error" -> Messages("access.denied")(messages)))
   }
 }

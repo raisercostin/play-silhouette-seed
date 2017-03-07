@@ -2,7 +2,7 @@ package models.daos.slick
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
-import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import play.api.libs.concurrent.Execution.Implicits._
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
@@ -21,7 +21,7 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
     dbLoginInfo <- loginInfoQuery(loginInfo)
     dbPasswordInfo <- slickPasswordInfos if dbPasswordInfo.loginInfoId === dbLoginInfo.id
   } yield dbPasswordInfo
-  
+
   // Use subquery workaround instead of join to get authinfo because slick only supports selecting
   // from a single table for update/delete queries (https://github.com/slick/slick/issues/684).
   protected def passwordInfoSubQuery(loginInfo: LoginInfo) =
@@ -32,12 +32,12 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
       slickPasswordInfos +=
         DBPasswordInfo(authInfo.hasher, authInfo.password, authInfo.salt, dbLoginInfo.id.get)
     }.transactionally
-    
+
   protected def updateAction(loginInfo: LoginInfo, authInfo: PasswordInfo) =
     passwordInfoSubQuery(loginInfo).
       map(dbPasswordInfo => (dbPasswordInfo.hasher, dbPasswordInfo.password, dbPasswordInfo.salt)).
       update((authInfo.hasher, authInfo.password, authInfo.salt))
-  
+
   /**
    * Finds the auth info which is linked with the specified login info.
    *
@@ -46,7 +46,7 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
    */
   def find(loginInfo: LoginInfo): Future[Option[PasswordInfo]] = {
     db.run(passwordInfoQuery(loginInfo).result.headOption).map { dbPasswordInfoOption =>
-      dbPasswordInfoOption.map(dbPasswordInfo => 
+      dbPasswordInfoOption.map(dbPasswordInfo =>
         PasswordInfo(dbPasswordInfo.hasher, dbPasswordInfo.password, dbPasswordInfo.salt))
     }
   }
@@ -68,7 +68,7 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
    * @param authInfo The auth info to update.
    * @return The updated auth info.
    */
-  def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = 
+  def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] =
     db.run(updateAction(loginInfo, authInfo)).map(_ => authInfo)
 
   /**

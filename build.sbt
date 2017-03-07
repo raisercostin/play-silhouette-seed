@@ -1,10 +1,10 @@
-import scalariform.formatter.preferences._
-
 name := "silhouette-seed-multiproject"
 
-version := "3.0.1"
+version := "4.0.0"
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.11.8"
+
+resolvers += Resolver.jcenterRepo
 
 lazy val silhouetteCommons = (project in file("modules/silhouette-commons"))
 
@@ -24,6 +24,8 @@ WebKeys.importDirectly := true
 
 routesGenerator := InjectedRoutesGenerator
 
+routesImport += "utils.route.Binders._"
+
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-feature", // Emit warning and location for usages of features that should be imported explicitly.
@@ -40,14 +42,19 @@ scalacOptions ++= Seq(
 //********************************************************
 // Scalariform settings
 //********************************************************
+/*
+import com.typesafe.sbt.SbtScalariform._
+
+import scalariform.formatter.preferences._
 
 defaultScalariformSettings
 
 ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(FormatXml, false)
   .setPreference(DoubleIndentClassDeclaration, false)
+  .setPreference(DanglingCloseParenthesis, Preserve)
   .setPreference(PreserveDanglingCloseParenthesis, true)
-
+*/
 //********************************************************
 // Eclipse settings
 //********************************************************
