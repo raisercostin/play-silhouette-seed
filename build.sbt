@@ -1,28 +1,11 @@
-import play.PlayScala
-
 import scalariform.formatter.preferences._
 
 name := "silhouette-seed-multiproject"
 
-version := "1.0"
+version := "3.0.1"
 
 scalaVersion := "2.10.6"
 
-resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
-
-resolvers += Resolver.sonatypeRepo("snapshots")
-
-//Preparing to separate silhouette dependencies on specific persistence and presentation
-//
-//Persistence modules
-//lazy val silhouetteMemory = (project in file("modules/silhouettePersistence"))
-//lazy val silhouetteMongoDb = (project in file("modules/silhouettePersistence"))
-//
-//Presentation modules
-//lazy val silhouetteTemplatesUi = (project in file("modules/silhouettePersistence"))
-//lazy val silhouetteAngularUi = (project in file("modules/silhouettePersistence"))
-
-//common configs for silhouette
 lazy val silhouetteCommons = (project in file("modules/silhouette-commons"))
 
 lazy val silhouetteSlickDb = (project in file("modules/silhouette-slick-db"))
@@ -30,15 +13,16 @@ lazy val silhouetteSlickDb = (project in file("modules/silhouette-slick-db"))
 
 lazy val silhouetteModule = (project in file("modules/silhouette"))
 	.dependsOn(silhouetteSlickDb)
-	.enablePlugins(PlayScala)
 
 lazy val root = (project in file("."))
 	.enablePlugins(PlayScala)
 	.aggregate(silhouetteModule, silhouetteSlickDb, silhouetteCommons)
 	.dependsOn(silhouetteModule)
 
-play.PlayImport.PlayKeys.routesImport ++= Seq("scala.language.reflectiveCalls") 
+play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls")
+//WebKeys.importDirectly := true
 
+routesGenerator := InjectedRoutesGenerator
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -64,10 +48,13 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(DoubleIndentClassDeclaration, false)
   .setPreference(PreserveDanglingCloseParenthesis, true)
 
+//********************************************************
+// Eclipse settings
+//********************************************************
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 EclipseKeys.withSource := true
 EclipseKeys.eclipseOutput := Some("target2/eclipse")
 //multiproject http://stackoverflow.com/questions/13324563/splitting-multiple-projects-w-play-2-scala
 EclipseKeys.skipParents in ThisBuild := false
 EclipseKeys.withBundledScalaContainers := true
-EclipseKeys.projectFlavor := EclipseProjectFlavor.Scala 
+EclipseKeys.projectFlavor := EclipseProjectFlavor.Scala

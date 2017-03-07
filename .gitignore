@@ -10,8 +10,10 @@ dist
 /out
 /.idea_modules
 /RUNNING_PID
+
 .classpath
 .project
 .cache-main
+.cache-tests
 .settings/
 bin/

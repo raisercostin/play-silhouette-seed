@@ -1,5 +1,3 @@
-import play.PlayScala
-
 import scalariform.formatter.preferences._
 
 name := "silhouette-seed"
@@ -12,14 +10,22 @@ resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: 
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
+enablePlugins(PlayScala)
+
 libraryDependencies ++= Seq(
-  "com.mohiva" %% "play-silhouette" % "2.0",
-  "org.webjars" %% "webjars-play" % "2.3.0",
-  "org.webjars" % "bootstrap" % "3.1.1",
+  "com.mohiva" %% "play-silhouette" % "3.0.2",
+  "org.webjars" %% "webjars-play" % "2.4.0-1",
+  "net.codingwell" %% "scala-guice" % "4.0.0",
+  "net.ceedubs" %% "ficus" % "1.0.1", //1.1.2 for scala 2.11
+  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
+  //"org.webjars" % "bootstrap" % "3.1.1",
   "org.webjars" % "jquery" % "1.11.0",
-  "net.codingwell" %% "scala-guice" % "4.0.0-beta5",
-  "com.mohiva" %% "play-silhouette-testkit" % "2.0" % "test",
-  cache
+  "net.codingwell" %% "scala-guice" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-testkit" % "3.0.2" % "test",
+	specs2 % Test,
+	cache,
+	filters,
+	evolutions
 )
 
 //silhouetteModule.enablePlugins(PlayScala)
