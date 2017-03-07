@@ -2,5 +2,6 @@
 logLevel := Level.Warn
 
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.4")
-
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
+// Use the Scalariform plugin to reformat the code
+//addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")

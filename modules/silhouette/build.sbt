@@ -1,4 +1,4 @@
-name := "silhouette-seed-multiproject"
+name := "silhouette-seed"
 
 version := "4.0.0"
 
@@ -6,21 +6,28 @@ scalaVersion := "2.11.8"
 
 resolvers += Resolver.jcenterRepo
 
-lazy val silhouetteCommons = (project in file("modules/silhouette-commons"))
+enablePlugins(PlayScala)
 
-lazy val silhouetteSlickDb = (project in file("modules/silhouette-slick-db"))
-	.dependsOn(silhouetteCommons)
+libraryDependencies ++= Seq(
+  "com.mohiva" %% "play-silhouette" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
+  "org.webjars" %% "webjars-play" % "2.5.0-2",
+  "net.codingwell" %% "scala-guice" % "4.0.1",
+  "com.iheart" %% "ficus" % "1.2.6",
+  "com.typesafe.play" %% "play-mailer" % "5.0.0",
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.5.0-akka-2.4.x",
+  "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
+  "com.mohiva" %% "play-silhouette-testkit" % "4.0.0" % "test",
 
-lazy val silhouetteModule = (project in file("modules/silhouette"))
-	.dependsOn(silhouetteSlickDb)
+  "org.webjars" % "jquery" % "1.11.0",
+  specs2 % Test,
+  cache,
+  filters
+)
 
-lazy val root = (project in file("."))
-	.enablePlugins(PlayScala)
-	.aggregate(silhouetteModule, silhouetteSlickDb, silhouetteCommons)
-	.dependsOn(silhouetteModule)
-
-play.sbt.routes.RoutesKeys.routesImport ++= Seq("scala.language.reflectiveCalls")
-WebKeys.importDirectly := true
+//silhouetteModule.enablePlugins(PlayScala)
+TwirlKeys.templateImports ++= Seq("com.mohiva.play._","controllers.silhouette.{routes => moduleRoutes}")
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -44,7 +51,6 @@ scalacOptions ++= Seq(
 //********************************************************
 /*
 import com.typesafe.sbt.SbtScalariform._
-
 import scalariform.formatter.preferences._
 
 defaultScalariformSettings
@@ -53,15 +59,4 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(FormatXml, false)
   .setPreference(DoubleIndentClassDeclaration, false)
   .setPreference(DanglingCloseParenthesis, Preserve)
-  .setPreference(PreserveDanglingCloseParenthesis, true)
 */
-//********************************************************
-// Eclipse settings
-//********************************************************
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
-EclipseKeys.withSource := true
-EclipseKeys.eclipseOutput := Some("target2/eclipse")
-//multiproject http://stackoverflow.com/questions/13324563/splitting-multiple-projects-w-play-2-scala
-EclipseKeys.skipParents in ThisBuild := false
-EclipseKeys.withBundledScalaContainers := true
-EclipseKeys.projectFlavor := EclipseProjectFlavor.Scala

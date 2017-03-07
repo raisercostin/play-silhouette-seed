@@ -9,8 +9,12 @@ dist
 /*.iml
 /out
 /.idea_modules
-/.classpath
-/.project
 /RUNNING_PID
-/.settings
-/bin
+
+.classpath
+.project
+.cache-main
+.cache-tests
+.settings/
+bin/
+/conf/*.bak
