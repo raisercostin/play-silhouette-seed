@@ -114,8 +114,7 @@ There are multiple working tags/branches that contain various features.
 
 ## Variants
 
-![enter image description here](docs/branches1.png)
-![enter image description here](docs/branches2.png)
+![enter image description here](docs/branches.png)
 
 [1]:#
 [2]:http://www.lightbend.com/activator/template/play-2.4--multimodule--silhouette-3.0--slick-2.0--seed
