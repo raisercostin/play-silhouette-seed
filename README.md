@@ -50,13 +50,63 @@ This project template is also
 
 The code is licensed under [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
-# Dependencies
+# Rationale
 
-| library | play   | activator | sbt            | scala       | jdk            | slick       | play-slick        | silhouette | bootstrap     |
-|---------|--------|-----------|----------------|-------------|----------------|-------------|-------------------|------------|---------------|
-| play23  | 2.3    | 1.3.2     | 0.13.8         | 2.10 2.11   | jdk6/jdk7/jdk8 | 2.0.0       | 0.7.0             | 1.0/2.0.2  | 3.2.0         |
-| play24  | 2.4    | 1.3.12    | 0.13.8         | 2.10.6      | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
-| play24  | 2.4    | 1.3.12    | 0.13.8         | 2.11.8      | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
-| play25  | 2.5.12 | 1.3.12    | 0.13.8 0.13.11 | 2.11.7      | jdk8           | 3.1.x       | 2.0.2             | 4.0        | 3.2.0         |
-|         |        |           |                |             |                |             |                   |            |               |
-| last    | 2.5    | 1.3.12    | 0.13.13        | 2.11/2.12   | jdk9           | 3.1         | 2.0.2             | 4.0        | 4.0.0-alpha.6 |
+## The plan
+
+Adding authorization in your web-app should be simple.
+Following Convention over Configuration strategy you should be able to get something working in several steps:
+1. Just work - Import a library and configuring some properties.
+2. Change UI - You should be able to override some UI styling aspects and the master layout of the authorization related pages.
+3. Choose another UI - Maybe you want to switch to templates or angularjs UI
+4. Choose another persistence - To use a database layer that you already have.
+
+## Roadmap
+
+- [done] Create a *multiproject* layout to simplify integration of features developed in different forks: persistance and presentation.
+- [in progress] Clarify current features in the forks ecosystem - almost done
+- Extract silhouette-persistence in a separate library. Looks like silhouette-4.x already does this?
+- Extract silhouette-persistence implementations in separate libraries:
+  - in memory
+  - slick in memory
+  - slick with h2 in memory - good for testing the schema and upgrades
+  - slick with h2 in file - good for testing
+  - slick with mysql
+  - slick with postgresql
+  - mongodb
+- Extract silhouette-backend in a separate library. This can be reused without visualy impacting any project.
+- Extract silhouette-presentation implementations in separate libraries:
+  - based on templates
+  - based on angularjs
+
+## Tags
+
+There are multiple working tags/branches that contain various features.
+
+### Single project seeds
+play-2.2--singleproject--silhouette-0.9
+play-2.3--singleproject--silhouette-1.0
+play-2.3--singleproject--silhouette-2.0
+play-2.3--singleproject--silhouette-2.0--slick-2.0
+play-2.4--singleproject--silhouette-3.0
+play-2.5--singleproject--silhouette-4.0
+
+### Multi project seeds
+play-2.2--multiproject--silhouette-0.9
+play-2.3--multiproject--silhouette-1.0
+play-2.3--multiproject--silhouette-2.0
+play-2.3--multiproject--silhouette-2.0--slick-2.0
+play-2.4--multiproject--silhouette-3.0
+play-2.4--multiproject--silhouette-3.0--slick-2.0-tag
+play-2.5--multiproject--silhouette-4.0
+play-2.5--multiproject--silhouette-4.0--slick-3.0
+
+## Dependencies
+
+| seed | library  | play   | activator | sbt            | scala       | jdk            | slick       | slick plugin      | silhouette | bootstrap     |
+|------|----------|--------|-----------|----------------|-------------|----------------|-------------|-------------------|------------|---------------|
+| 1.0  | play23   | 2.3    | 1.3.2     | 0.13.8         | 2.10 2.11   | jdk6/jdk7/jdk8 | 2.0.0       | 0.7.0             | 1.0/2.0.2  | 3.2.0         |
+| 3.0  | play24   | 2.4    | 1.3.12    | 0.13.8         | 2.10 2.11.6 | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
+| 4.0  | play25   | 2.5.4  | 1.3.12    | 0.13.8 0.13.11 | 2.11.7      | jdk8           | 3.1.0       | 2.0.2             | 4.0.0      | 3.2.0         |
+|      |          |        |           |                |             |                |             |                   |            |               |
+| -    | play-2.6 | 2.5.12 | 1.3.12    | 0.13.13        | 2.11/2.12   | jdk9           | 3.1         | 2.0.2             | 4.0        | 4.0.0-alpha.6 |
