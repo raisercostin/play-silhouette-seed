@@ -85,29 +85,33 @@ Following Convention over Configuration strategy you should be able to get somet
 There are multiple working tags/branches that contain various features.
 
 ### Single project seeds
-* play-2.2--singleproject--silhouette-0.9
-* play-2.3--singleproject--silhouette-1.0
-* play-2.3--singleproject--silhouette-2.0
-* play-2.3--singleproject--silhouette-2.0--slick-2.0
-* play-2.4--singleproject--silhouette-3.0
-* play-2.5--singleproject--silhouette-4.0
+* [play-2.2--singleproject--silhouette-0.9](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.2--singleproject--silhouette-0.9)
+* [play-2.3--singleproject--silhouette-1.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--singleproject--silhouette-1.0)
+* [play-2.3--singleproject--silhouette-2.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--singleproject--silhouette-2.0)
+* [play-2.3--singleproject--silhouette-2.0--slick-2.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--singleproject--silhouette-2.0--slick-2.0)
+* [play-2.4--singleproject--silhouette-3.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.4--singleproject--silhouette-3.0)
+* [play-2.5--singleproject--silhouette-4.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.5--singleproject--silhouette-4.0)
 
 ### Multi project seeds
-* play-2.2--multiproject--silhouette-0.9
-* play-2.3--multiproject--silhouette-1.0
-* play-2.3--multiproject--silhouette-2.0
-* play-2.3--multiproject--silhouette-2.0--slick-2.0
-* play-2.4--multiproject--silhouette-3.0
-* play-2.4--multiproject--silhouette-3.0--slick-2.0-tag
-* play-2.5--multiproject--silhouette-4.0
-* play-2.5--multiproject--silhouette-4.0--slick-3.0
+* [play-2.2--multiproject--silhouette-0.9](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.2--multiproject--silhouette-0.9)
+* [play-2.3--multiproject--silhouette-1.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--multiproject--silhouette-1.0)
+* [play-2.3--multiproject--silhouette-2.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--multiproject--silhouette-2.0)
+* [play-2.3--multiproject--silhouette-2.0--slick-2.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.3--multiproject--silhouette-2.0--slick-2.0)
+* [play-2.4--multiproject--silhouette-3.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.4--multiproject--silhouette-3.0)
+* [play-2.4--multiproject--silhouette-3.0--slick-2.0-tag](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.4--multiproject--silhouette-3.0--slick-2.0-tag)
+* [play-2.5--multiproject--silhouette-4.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.5--multiproject--silhouette-4.0)
+* [play-2.5--multiproject--silhouette-4.0--slick-3.0](https://github.com/raisercostin/play-silhouette-slick-seed/tree/play-2.5--multiproject--silhouette-4.0--slick-3.0)
 
 ## Dependencies
 
-| seed | library  | play   | activator | sbt            | scala       | jdk            | slick       | slick plugin      | silhouette | bootstrap     |
-|------|----------|--------|-----------|----------------|-------------|----------------|-------------|-------------------|------------|---------------|
-| 1.0  | play23   | 2.3    | 1.3.2     | 0.13.8         | 2.10 2.11   | jdk6/jdk7/jdk8 | 2.0.0       | 0.7.0             | 1.0/2.0.2  | 3.2.0         |
-| 3.0  | play24   | 2.4    | 1.3.12    | 0.13.8         | 2.10 2.11.6 | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
-| 4.0  | play25   | 2.5.4  | 1.3.12    | 0.13.8 0.13.11 | 2.11.7      | jdk8           | 3.1.0       | 2.0.2             | 4.0.0      | 3.2.0         |
-|      |          |        |           |                |             |                |             |                   |            |               |
-| -    | play-2.6 | 2.5.12 | 1.3.12    | 0.13.13        | 2.11/2.12   | jdk9           | 3.1         | 2.0.2             | 4.0        | 4.0.0-alpha.6 |
+| activator seed | library  | play   | activator | sbt            | scala       | jdk            | slick       | slick plugin      | silhouette | bootstrap     |
+|----------------|----------|--------|-----------|----------------|-------------|----------------|-------------|-------------------|------------|---------------|
+| [1.0][1]       | play23   | 2.3    | 1.3.2     | 0.13.8         | 2.10 2.11   | jdk6/jdk7/jdk8 | 2.0.0       | 0.7.0             | 1.0/2.0.2  | 3.2.0         |
+| [3.0][2]       | play24   | 2.4    | 1.3.12    | 0.13.8         | 2.10 2.11.6 | jdk8           | 3.0.5 3.1.x | 1.0.0 1.0.1/1.1.1 | 3.0.5      | 3.2.0         |
+| [4.0][3]       | play25   | 2.5.4  | 1.3.12    | 0.13.8 0.13.11 | 2.11.7      | jdk8           | 3.1.0       | 2.0.2             | 4.0.0      | 3.2.0         |
+|                |          |        |           |                |             |                |             |                   |            |               |
+| -              | play-2.6 | 2.5.12 | 1.3.12    | 0.13.13        | 2.11/2.12   | jdk9           | 3.1         | 2.0.2             | 4.0        | 4.0.0-alpha.6 |
+
+[1]:#
+[2]:http://www.lightbend.com/activator/template/play-2.4--multimodule--silhouette-3.0--slick-2.0--seed
+[3]:http://www.lightbend.com/activator/template/play-2.5--multimodule--silhouette-4.0--slick-3.0--seed
