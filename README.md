@@ -56,6 +56,7 @@ The code is licensed under [Apache License v2.0](http://www.apache.org/licenses/
 
 Adding authorization in your web-app should be simple.
 Following Convention over Configuration strategy you should be able to get something working in several steps:
+
 1. Just work - Import a library and configuring some properties.
 2. Change UI - You should be able to override some UI styling aspects and the master layout of the authorization related pages.
 3. Choose another UI - Maybe you want to switch to templates or angularjs UI
@@ -84,22 +85,22 @@ Following Convention over Configuration strategy you should be able to get somet
 There are multiple working tags/branches that contain various features.
 
 ### Single project seeds
-play-2.2--singleproject--silhouette-0.9
-play-2.3--singleproject--silhouette-1.0
-play-2.3--singleproject--silhouette-2.0
-play-2.3--singleproject--silhouette-2.0--slick-2.0
-play-2.4--singleproject--silhouette-3.0
-play-2.5--singleproject--silhouette-4.0
+* play-2.2--singleproject--silhouette-0.9
+* play-2.3--singleproject--silhouette-1.0
+* play-2.3--singleproject--silhouette-2.0
+* play-2.3--singleproject--silhouette-2.0--slick-2.0
+* play-2.4--singleproject--silhouette-3.0
+* play-2.5--singleproject--silhouette-4.0
 
 ### Multi project seeds
-play-2.2--multiproject--silhouette-0.9
-play-2.3--multiproject--silhouette-1.0
-play-2.3--multiproject--silhouette-2.0
-play-2.3--multiproject--silhouette-2.0--slick-2.0
-play-2.4--multiproject--silhouette-3.0
-play-2.4--multiproject--silhouette-3.0--slick-2.0-tag
-play-2.5--multiproject--silhouette-4.0
-play-2.5--multiproject--silhouette-4.0--slick-3.0
+* play-2.2--multiproject--silhouette-0.9
+* play-2.3--multiproject--silhouette-1.0
+* play-2.3--multiproject--silhouette-2.0
+* play-2.3--multiproject--silhouette-2.0--slick-2.0
+* play-2.4--multiproject--silhouette-3.0
+* play-2.4--multiproject--silhouette-3.0--slick-2.0-tag
+* play-2.5--multiproject--silhouette-4.0
+* play-2.5--multiproject--silhouette-4.0--slick-3.0
 
 ## Dependencies
 
