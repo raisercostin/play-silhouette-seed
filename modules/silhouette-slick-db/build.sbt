@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
 
 	,"com.typesafe.play" %% "play-slick" % "2.0.2"
 	,"com.typesafe.play" %% "play-slick-evolutions" % "2.0.2"
+	,"com.typesafe.slick" %% "slick-hikaricp" % "3.2.0" //override the 3.1.0 version required by play-slick-2.0.2
 	,"com.typesafe.slick" %% "slick" % "3.1.0"
 	,"com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0"
 	,"joda-time" % "joda-time" % "2.9.7"
