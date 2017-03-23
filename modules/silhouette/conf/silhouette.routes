@@ -27,7 +27,7 @@ GET         /account/activate/:token         controllers.silhouette.ActivateAcco
 
 # Map static resources from the /public folder to the /assets URL path
 #option1 - Add this to parent `build.sbt` and should work: WebKeys.importDirectly := true
-GET         /assets/*file                    controllers.Assets.at(path="/public", file)
+GET         /assets/*file                    controllers.Assets.versioned(path="/public", file: Asset)
 #option2 - To fix collisions should change to https://github.com/playframework/playframework/issues/4576
 #GET         /assets/*file                    controllers.Assets.at(path="/public/modules/silhouette", file)
 

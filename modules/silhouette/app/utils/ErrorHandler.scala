@@ -12,6 +12,7 @@ import play.api.{ OptionalSourceMapper, Configuration }
 
 import scala.concurrent.Future
 import com.mohiva.play.silhouette.api.actions.SecuredErrorHandler
+import play.api.i18n.MessagesApi
 
 /**
  * A secured error handler.
@@ -21,7 +22,7 @@ class ErrorHandler @Inject() (
   config: Configuration,
   sourceMapper: OptionalSourceMapper,
   router: javax.inject.Provider[Router],
-  messages: Messages
+  messages: MessagesApi
 )
     extends DefaultHttpErrorHandler(env, config, sourceMapper, router)
     with SecuredErrorHandler {
@@ -49,6 +50,6 @@ class ErrorHandler @Inject() (
    * @return The result to send to the client.
    */
   override def onNotAuthorized(implicit request: RequestHeader): Future[Result] = {
-    Future.successful(Redirect(routes.SignInController.submit()).flashing("error" -> Messages("access.denied")(messages)))
+    Future.successful(Redirect(routes.SignInController.submit()).flashing("error" -> messages("access.denied")))
   }
 }
