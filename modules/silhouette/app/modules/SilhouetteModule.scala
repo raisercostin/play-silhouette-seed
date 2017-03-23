@@ -47,6 +47,7 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
   def configure() = {
     bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
     bind[UnsecuredErrorHandler].to[CustomUnsecuredErrorHandler]
+    //bind[SecuredErrorHandler].to[DefaultSecuredErrorHandler] this is disabled now
     bind[SecuredErrorHandler].to[CustomSecuredErrorHandler]
     bind[UserService].to[UserServiceImpl]
     //
