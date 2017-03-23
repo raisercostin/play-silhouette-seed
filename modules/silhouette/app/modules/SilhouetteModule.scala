@@ -138,8 +138,21 @@ class SilhouetteModule(environment: play.api.Environment, configuration: Configu
       vkProvider,
       xingProvider,
       yahooProvider,
-      clefProvider
-    ))
+      clefProvider).filter(x => Settings(x.settings).isConfigured)
+    )
+  }
+
+  case class Settings(settings: Any) {
+    def isConfigured(): Boolean = settings match {
+      case o: OAuth2Settings =>
+        !o.clientID.isEmpty && !o.clientSecret.isEmpty
+      case o: OAuth1Settings =>
+        !o.consumerKey.isEmpty && !o.consumerSecret.isEmpty
+      case o: OpenIDSettings =>
+        !o.realm.map(_.isEmpty).getOrElse(true)
+      case _ =>
+        true
+    }
   }
 
   /**
